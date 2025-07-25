@@ -54,13 +54,13 @@ fn main() -> bitcoincore_rpc::Result<()> {
     for wallet_name in ["Miner", "Trader"] {
         let res = rpc.create_wallet(wallet_name, None, None, None, None);
         match res {
-            Ok(_) => println!("Wallet '{}' created.", wallet_name),
+            Ok(_) => println!("Wallet '{wallet_name}' created."),
             Err(e) => {
                 // If the error contain is "already exists", ignore the error
                 // else return error
                 let msg = format!("{e}");
                 if msg.contains("already exists") {
-                    println!("Wallet '{}' has been created already", wallet_name);
+                    println!("Wallet '{wallet_name}' has been created already");
                 } else {
                     return Err(e);
                 }
@@ -95,14 +95,14 @@ fn main() -> bitcoincore_rpc::Result<()> {
     }
     println!("Blocks mined until positive balance: {blocks_mined}");
 
-    println!("Miner balance: {} BTC", balance);
+    println!("Miner balance: {balance} BTC");
 
     // Load Trader wallet and generate a new address
     // 1. Generate a receiving address for Trader with label "Received"
     let trader_address = trader_wallet
         .get_new_address(Some("Received"), None)?
         .assume_checked();
-    println!("Trader's receiving address: {}", trader_address);
+    println!("Trader's receiving address: {trader_address}");
 
     // 2. Send 20 BTC from Miner to Trader
     let txid = miner_wallet.send_to_address(
@@ -115,12 +115,12 @@ fn main() -> bitcoincore_rpc::Result<()> {
         None,
         None,
     )?;
-    println!("Sent 20 BTC from Miner to Trader. Tx ID: {}", txid);
+    println!("Sent 20 BTC from Miner to Trader. Tx ID: {txid}");
 
     // Check transaction in mempool
     // 1. Fetch the unconfirmed transaction from the mempool and print the result
     let mempool_entry = miner_wallet.get_mempool_entry(&txid)?;
-    println!("Mempool entry for txid {}: {:#?}", txid, mempool_entry);
+    println!("Mempool entry for txid {txid}: {mempool_entry:#?}");
 
     // 2. Mine 1 block to confirm the transaction
     miner_wallet.generate_to_address(1, &mining_address)?;
